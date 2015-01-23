@@ -12,12 +12,63 @@
 <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
 <!-- My Phone Number & Dial Areas -->
 <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
-<div class="container">
+
+<div class='overlay' id='auth-overlay'>
+    
+    <div class="container" id="auth-super">
+        <div  class="row">
+            <div class="col-sm-6" style="background: #afa6a6;border-radius: 10px;">
+                <div id="auth-dialog">
+                    <div id="title-section">
+                        <div class="row">
+                            <div class="col-sm-8 col-sm-offset-3"><span><h4>PubNub WebRTC App with Parse</h4></span></div>
+                            
+                        </div>
+                    </div>
+                    <div id="logo-section">
+                        <div class="row">
+                            <div class="col-sm-4 col-sm-offset-2"><img src="img/parse.png" width=100/></div>
+                            <div class="col-sm-3"><img src="img/pubnub.png" width=150/></div>
+                        </div>
+                    </div>
+                    <div id="username-section">
+                        <div class="row">
+                            <div class="col-sm-3 col-sm-offset-1" style="text-align:center;"><span>Username</span></div>
+                            <div class="col-sm-6"><input id='user-text' type="text" class="form-control" placeholder="Username"></div>
+                            
+                        </div>
+                    </div>
+                    <div id="password-section">
+                        <div class="row">
+                            <div class="col-sm-3 col-sm-offset-1" style="text-align:center;"><span>Password</span></div>
+                            <div class="col-sm-6"><input id='password-text' type="password" class="form-control" placeholder="Password"></div>
+                        </div>
+                    </div>
+                    <div id="role-section">
+                        
+                        
+                    </div>
+                    <div id="button-section" class="row">
+                        <div class="col-sm-2 col-sm-offset-4" style="text-align:center;">
+                            <span><button id='login-button' type="button" class="btn btn-default">Login</button></span>
+                        </div>
+                        <div class="col-sm-2" style="text-align:center;">
+                            <span><button id='signup-button' type="button" class="btn btn-default">Signup</button></span>
+                        </div>
+                    </div>
+                    <div id="status-section">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+    
+<div class="container" id='app-ui'>
     <div class="row">
 
-        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
-        <!-- MY PHONE NUMBER -->
-        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+        
         <div class="col-sm-6">
             <div id="my-number-section" class="text-center">
                 <div id="my-number">LOADING</div>
@@ -36,11 +87,9 @@
             </div>
         </div>
 
-        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
-        <!-- Video -->
-        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+        
         <div class="col-sm-6">
-            <!-- DISPLAY -->
+            
             <div class="row">
                 <div class="col-xs-12 text-center">
                     <div id="video-border">
@@ -60,17 +109,17 @@
                 </div>
             </div>
             
-            <!-- DIAL CONTROLS -->
+            
             <div class="row">
-                <div class="col-sm-6 col-xs-7">
+                <div class="col-sm-4 col-xs-4">
                     <div class="form-group"><div class="input-group">
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th"></span>
                     </div>
-                    <input id="number" class="form-control" type="number" placeholder="Type Recipient's #">
+                    <input id="number" class="form-control" type="number" placeholder="Destination #">
                     </div></div>
                 </div>
-                <div class="col-sm-6 col-xs-5 dial-buttons">
+                <div class="col-sm-4 col-xs-4 dial-buttons">
                     <button id="dial" class="btn btn-primary">
                         <span class="glyphicon glyphicon-earphone"></span>
                     </button>
@@ -79,20 +128,234 @@
                     </button>
                     <button id="hangup" class="btn btn-danger">
                         <span class="glyphicon glyphicon-ban-circle"></span>
-                    </button>                    
+                    </button>
+                </div>
+                <div class="col-sm-4 col-xs-4 dial-buttons">
+                    <button id="logout" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-off"></span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+    
+
 <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
 <!-- WebRTC Peer Connections -->
 <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="https://cdn.pubnub.com/pubnub.min.js"></script>
+<script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
 <script src="js/webrtc.js"></script>
 <script src="js/sound.js"></script>
-<script>(function(){
+<script>
+
+    $(document).ready(function(){
+        
+        //Parse Initialization
+         Parse.initialize("tX4VfAq8bp4XS7WhnbJ1fD0BZQKWjRQrDVBabIEg",
+                   "eC8goNbvIyu2u5gY9dZjOVho4OTsOPAfw8SngoRQ");
+        
+        
+        var currentUser = Parse.User.current();
+        if (currentUser) {
+            
+            initWebRTC();   
+            $('#auth-overlay').remove();
+            
+            
+        } else {
+         
+            $('#auth-overlay').css('display','block');
+            
+        }
+        
+        $('#app-ui').css('display','block');
+        
+        $('#logout').click(function(){
+            
+            if(Parse.User.current()){
+                Parse.User.logOut();
+                
+            }
+            
+            
+            window.location.reload(true);
+            
+        })
+        
+        //Event handler for Login Button
+        $('#login-button').click(function(){
+           
+            
+            //Login Button Clicked , check the the mode
+            if("Login" == $('#login-button').text()){
+            
+                //Mode is set to login, perform login using the username and password provided
+                
+                //Login Prechecks
+                
+                //CHECK 1 - Username and password is not empty
+                if(!$('#user-text').val() || !$('#password-text').val()){
+                    
+                    alert("All fields are mandatory");
+                    return;    
+                }
+                
+                performLogin();
+                
+            } else {
+                
+                //Mode is assumed to be Submit, perform signup request after performing the prechecks
+                
+                //Pre checks for signup
+                
+                //CHECK 1 - All fields are populated
+                if(!$('#user-text').val() || !$('#password-text').val() || !$('#resetpassword-text').val()){
+                    
+                    alert("All fields are mandatory");
+                    return;    
+                }
+                //CHECK 2 - Text in Password and Retype Password field is same
+                if($('#password-text').val() != $('#resetpassword-text').val()){
+                    
+                    alert("Passwords do not match");
+                    return;
+                }
+                //CHECK 3 - One of the role is selected
+                if(!$('#role-both').prop('checked') && !$('#role-call').prop('checked')){
+                 
+                    alert('Select a role for the app, either "Call and Chat" or "Call only" ');
+                    return;
+                    
+                }
+                
+                //If we reached here then all prechecks passed successfully, so lets signup the user
+                performSignup();
+            }
+            
+            
+            
+            
+
+            
+        });
+        
+        //Event handler for Login Button
+        $('#signup-button').click(function(){
+           
+            if("Signup" == $('#signup-button').text()){
+                
+                //Display Signup fields
+                var retypePasswdElem = '<div class="row"> \
+                                            <div class="col-sm-3 col-sm-offset-1" style="text-align:center;"><span>Retype Password</span></div> \
+                                            <div class="col-sm-6"><input id="resetpassword-text" type="password" class="form-control" placeholder="Password"></div> \
+                                        </div>';
+
+
+                var roleElem = '<div class="row"> \
+                                <div class="col-sm-3 col-sm-offset-3"><label><input type="radio" id="role-both" name="roleoption">Call and Chat</label></div> \
+                                <div class="col-sm-3 col-sm-offset-1"><label><input type="radio" id="role-call" name="roleoption">Call only</label></div> \
+                            </div>';
+
+                //Retype password field
+                $("#password-section").append(retypePasswdElem);
+                
+                //Role field
+                $("#role-section").append(roleElem);
+                
+                //Rename the buttons to enable submission or cancelling of signup request 
+                $('#signup-button').text("Cancel");
+                $('#login-button').text("Submit");
+                
+            } else {
+                //Signup button set as Cancel. Cancel the form by doing a fresh reload of the page
+                window.location.reload(false);
+                
+            }
+            
+        });
+        
+    });
+  
+    var performLogin = function(){
+        
+        $('#status-section').html('Attempting to login as user ' + $('#user-text').val());
+        
+        Parse.User.logIn($('#user-text').val(), $('#password-text').val(), {
+            success: function(user) {
+                    
+                $('#status-section').html('Authentication successful for user ' + user.getUsername() + ' , Loading PubNub WebRTC App');
+                
+                
+                
+                initWebRTC();
+                
+                $('#auth-overlay').fadeOut(1000);
+                setTimeout(function(){
+                 
+                    $('#auth-overlay').remove();
+                       
+                    
+                },3000);
+                
+                
+                    
+            },
+            
+            error: function(user, error) {
+                    
+                $('#status-section').html('Authentication failed for user ' + user.getUsername() + ' ' + error.message);
+                    
+            }
+        });
+                
+    }
+    
+    var performSignup = function(){
+        
+        //Step 1 - Create the Parse User Object
+        var user = new Parse.User();
+        user.set("username", $('#user-text').val());
+        user.set("password", $('#password-text').val());
+        
+        //Step 2 - Set the functional role for the user
+        if($('#role-both').prop('checked')){
+            user.set('function','both');   
+        }
+        
+        if($('#role-call').prop('checked')){
+            user.set('function','call');   
+        }
+        
+        //Step 3 - Set status message 
+        $('#status-section').html('Attempting to signup user ' + $('#user-text').val());
+        
+        //Step 4 - Perform signup via Parse
+        user.signUp(null, {
+            success: function(user) {
+                
+                $('#status-section').html('User ' + user.getUsername() + ' signed up successfully , Redirecting to Login page');
+                setTimeout(function(){
+                 
+                    window.location.reload();
+                    
+                },3000);
+                
+            },
+            error: function(user, error) {
+                
+                $('#status-section').html('Signup failed for User ' + user.getUsername() + ' , ' + ' ' + error.message);
+                
+            }
+        });
+        
+    }
+    
+    
+    var initWebRTC = function(){
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // Generate Random Number if Needed
@@ -102,6 +365,10 @@ var my_number       = PUBNUB.$('my-number');
 var my_link         = PUBNUB.$('my-number-link');
 var number          = urlargs.number || Math.floor(Math.random()*999+1);
 
+if (typeof number === 'string') {
+    number = number.replace(/\/$/, '')
+}
+        
 my_number.number    = number;
 my_number.innerHTML = ''+my_number.number;
 my_link.href        = location.href.split('?')[0] + '?call=' + number;
@@ -125,7 +392,10 @@ function urlparams() {
 
     PUBNUB.each(
         location.href.split('?')[1].split('&'),
-        function(data) { var d = data.split('='); params[d[0]] = d[1]; }
+        function(data) { 
+            var d = data.split('='); 
+            params[d[0]] = d[1];
+        }
     );
 
     return params;
@@ -148,8 +418,8 @@ var img_out   = PUBNUB.$('video-thumbnail');
 var img_self  = PUBNUB.$('video-self');
 var phone     = window.phone = PHONE({
     number        : my_number.number, // listen on this line
-    publish_key   : 'pub-c-561a7378-fa06-4c50-a331-5c0056d0163c',
-    subscribe_key : 'sub-c-17b7db8a-3915-11e4-9868-02ee2ddab7fe',
+    publish_key   : 'pub-c-d8f2a43e-160f-47e7-ab4c-2fbb2c848417',
+    subscribe_key : 'sub-c-ee40292a-5fe7-11e4-8dc6-02ee2ddab7fe',
     ssl           : true
 });
 
@@ -201,12 +471,13 @@ function dial(number) {
 // Ready to Send or Receive Calls
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 phone.ready(function(){
+    
     // Ready To Call
     set_icon('facetime-video');
 
     // Auto Call
     if ('call' in urlargs) {
-        var number = urlargs['call'];
+        var number = urlargs['call'].replace(/\/$/, '');
         PUBNUB.$('number').value = number;
         dial(number);
     }
@@ -314,6 +585,9 @@ phone.debug(function(details){
      // console.log(details);
 });
 
-})();</script>
+}
+
+  
+    </script>
 </body>
 </html>
