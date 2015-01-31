@@ -6,10 +6,10 @@ This is a modification of the WebRTC app earlier developed by the awesome folks 
 
 This modified extension of the WebRTC application supports Parse based user management features in the form of
  1. User Signup and Login
- 1. user logout
+ 1. User logout
  
 ## Usage ##
 
 Head over to the link below to try out the application. 
-http://shyampurk.github.io/pubnub-webrtc-parse/
+ http://shyampurk.github.io/pubnub-webrtc-parse/
 
