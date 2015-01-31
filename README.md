@@ -4,9 +4,9 @@ This is a modification of the WebRTC app earlier developed by the awesome folks 
 
 [Click Here](https://github.com/stephenlb/webrtc-sdk) to go to the GitHub repo of the original app
 
-This modified extension of the WebRTC application supports Parse based user management deatures in the form of
-1. User Signup and Login
-2. user logout
+This modified extension of the WebRTC application supports Parse based user management features in the form of
+ 1. User Signup and Login
+ 1. user logout
  
 ## Usage ##
 
