@@ -8,8 +8,8 @@ This modified extension of the WebRTC application supports Parse based user mana
  1. User Signup and Login
  1. User logout
 
-##Code Changes and modifications##
- 1. [index.html[](https://github.com/shyampurk/pubnub-webrtc-parse/blob/master/index.html)
+##Code changes and modifications##
+ 1. [index.html](https://github.com/shyampurk/pubnub-webrtc-parse/blob/master/index.html)
  1. [css/syles.css](https://github.com/shyampurk/pubnub-webrtc-parse/blob/master/css/styles.css)
  
 ## Usage ##
