@@ -7,6 +7,10 @@ This is a modification of the WebRTC app earlier developed by the awesome folks 
 This modified extension of the WebRTC application supports Parse based user management features in the form of
  1. User Signup and Login
  1. User logout
+
+##Code Changes and modifications##
+index.html
+css/syles.css
  
 ## Usage ##
 
